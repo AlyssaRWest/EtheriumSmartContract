@@ -40,27 +40,24 @@ contract Contract {
         _;
     }
     
-    function setWin(string memory _lastWin, uint8 _index, string memory _opt1, string memory _opt2) public onlyOwner {
+    function setWin(string memory _lastWin, bool _index, string memory _opt1, string memory _opt2) public onlyOwner {
         lastWin = _lastWin;
         option1 = _opt1;
         option2 = _opt2;
         
         uint winEther;
         uint lostEther;
-        bool winBid;
-        if (_index==0) {
+        if (_index==false) {
             winEther =  runningEther0;
             lostEther = runningEther1;
-            winBid = false;
         } else {
             winEther =  runningEther1;
             lostEther = runningEther0;
-            winBid = true;
         }
         
         uint i;
         for (i = 0; i < 10; i++) { //returning original ether
-            if (bidders[i].vote == winBid) {
+            if (bidders[i].vote == _index) {
                 bidders[i].bidderAddress.send(bidders[i].betAmount);
             }     
         }
