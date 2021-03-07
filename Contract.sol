@@ -18,9 +18,8 @@ contract Contract {
     // new bet 2
     string public option2 = "AMC";
     
-    
-    //group $$$
     Bidder[10] public bidders;
+    
     uint public bidderCount = 0;
     uint public runningEther0 = 0;
     uint public runningEther1 = 0;
@@ -40,7 +39,7 @@ contract Contract {
         _;
     }
     
-    function setWin(string memory _lastWin, bool _index, string memory _opt1, string memory _opt2) public onlyOwner {
+    function setWin(string memory _lastWin, bool _index, string memory _opt1, string memory _opt2) payable public onlyOwner {
         lastWin = _lastWin;
         option1 = _opt1;
         option2 = _opt2;
@@ -54,32 +53,20 @@ contract Contract {
             winEther =  runningEther1;
             lostEther = runningEther0;
         }
-        
+
         uint i;
-        for (i = 0; i < 10; i++) { //returning original ether
+        for (i = 0; i < bidderCount; i++) {
             if (bidders[i].vote == _index) {
-                bidders[i].bidderAddress.send(bidders[i].betAmount);
+                bidders[i].bidderAddress.send(bidders[i].betAmount);  //returning original ether
+                bidders[i].bidderAddress.send(lostEther*(bidders[i].betAmount/winEther)); //profit payback
             }     
         }
-        // bidder 1(0): 1
-        // bidder 2(0): 10
-        // bidder 3(1): 10
-        // (runningEther0) won
-        // bidder 1: 1 (og)
-        // bidder 1: lostEther*(bidder[1].betAmount/winEther)
 
     }
     
-    // function owner only:
-        //auth
-        //set last win
-        //change bet 1 and bet 2
-        //distribute the $$$
-        
-    
     function bid(bool _index) public payable {
         require(msg.value > 0);
-        if(bidderCount < 10) {
+        if(bidderCount < bidders.length) {
             bidders[bidderCount].betAmount = msg.value;
             bidders[bidderCount].bidderAddress = msg.sender;
             bidders[bidderCount].vote = _index;
