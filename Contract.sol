@@ -76,7 +76,10 @@ contract Contract {
         }
         bidderCount = 0;
     }
-    function bid(bool _index) public payable {
+    
+    //"1" for option1
+    //"2" for option2
+    function bid(uint8 _index) public payable {
         require(msg.value > 0);
         if(bidderCount < bidders.length) {
             bidders[bidderCount].betAmount = msg.value;
@@ -84,7 +87,7 @@ contract Contract {
             bidders[bidderCount].vote = _index;
             bidderCount++;
             owner.transfer(msg.value);
-            if (_index == false) {
+            if (_index == 1) {
                 runningEther1+= msg.value;
             } else {
                 runningEther2+= msg.value;
